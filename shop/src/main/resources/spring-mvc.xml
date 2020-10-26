@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+						   http://www.springframework.org/schema/beans/spring-beans.xsd
+						   http://www.springframework.org/schema/context
+						   http://www.springframework.org/schema/context/spring-context.xsd
+						   http://www.springframework.org/schema/aop
+						   http://www.springframework.org/schema/aop/spring-aop.xsd
+						   http://www.springframework.org/schema/tx
+						   http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/mvc
+						   http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!--配置扫描器，扫描Controller-->
+    <!--<context:component-scan base-package="com.itheima.ssm.controller"/>-->
+    <context:component-scan base-package="com.longIt.shoppingApp.controller"/>
+
+    <!--mvc注解驱动-->
+    <mvc:annotation-driven/>
+
+    <!--视图解析器-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--静态资源权限开放-->
+    <!--如果web.xml中的dispatcherServlet中的url-pattern配置的是*
+    的话，则所有的请求都会进SpringMVC 但有些静态资源没法帮我解析？？？ 只能放行-->
+    <!--使用默认的servlet来响应静态资源文件-->
+    <mvc:default-servlet-handler/>
+
+    <!--自己理解：测试用的 看看能不能调过来-->
+    <!--   http://127.0.0.1:8080/项目名/login   ===>    /WEB-INF/jsp/login.jsp-->
+    <!--指定视图与控制器的映射关系-->
+    <mvc:view-controller path="/login"/>
+    <mvc:view-controller path="/register"/>
+
+
+    <!--配置权限拦截器-->
+    <mvc:interceptors>
+        <!-- 前台登录拦截器 -->
+        <mvc:interceptor>
+            <!-- 指定拦截的地址 -->
+            <!-- http://127.0.0.1:8080/项目名/addToCar.do -->
+            <mvc:mapping path="/*.do"/>
+            <!-- http://127.0.0.1:8080/项目名/shopCar/addToCar.do -->
+            <mvc:mapping path="/*/*.do"/>
+
+            <!-- 声明拦截器的信息 -->
+            <bean class="com.longIt.shoppingApp.filter.LoginFilter"></bean>
+        </mvc:interceptor>
+
+        <!-- 后台登录拦截器 -->
+        <mvc:interceptor>
+            <!-- 指定拦截的地址 -->
+            <mvc:mapping path="/*.action"/>
+            <mvc:mapping path="/*/*.action"/>
+
+            <!-- 声明拦截器的信息 -->
+            <bean class="com.longIt.shoppingApp_manager.util.filter.ManagerLoginInterceptor"></bean>
+        </mvc:interceptor>
+
+    </mvc:interceptors>
+
+
+
+</beans>
